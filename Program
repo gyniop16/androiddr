@@ -1,0 +1,136 @@
+package com.jamm.sopa_letras;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class Program {
+	
+	private static final String FILENAME = "C:\\Users\\1012894\\Documents\\workspace\\test_file.txt";
+
+	public static void main(String[] args) {
+				
+		BufferedReader br = null;
+		FileReader fr = null;
+		
+		int lines;
+		int columns;
+		int dictLen;
+		char[][] matrix;
+		Map<String, Integer> dictionary = new HashMap<String, Integer>();
+		boolean error = false;
+		
+		try {
+			fr = new FileReader(FILENAME);
+			br = new BufferedReader(fr);
+			
+			String sLine;
+			
+			//Read line x / columns y
+			sLine = br.readLine();
+			String [] x = sLine.split(" ");
+			if(x.length == 2 ){
+				lines = Integer.parseInt(x[0]);
+				columns = Integer.parseInt(x[1]);
+				matrix = new char[lines][columns];
+				//foreach x 
+				for(int i = 0; i < lines; i++)
+				{
+					//read y char
+					sLine = br.readLine();
+					if(sLine.length() == columns){
+						matrix[i] = sLine.toCharArray();
+					}else {
+						error = true;
+						break;
+					}
+				}
+				System.out.println("###Posibles");
+				getPosibleStrings(matrix);
+				System.out.println("###");
+				System.out.println();
+				if(!error){
+				//Read dictionary lenght z
+					sLine = br.readLine();
+					dictLen = Integer.parseInt(sLine.trim());
+				//foreach z
+					for(int i=0 ; i<dictLen; i++){
+					//read string
+						sLine = br.readLine();
+						dictionary.put(sLine, 0);
+					}
+				
+					for(char[] cArr : matrix){
+						for(char c : cArr){
+							System.out.print(c);
+						}
+						System.out.println();
+					}
+					
+					for(String key : dictionary.keySet()){
+						System.out.println(key + " " + dictionary.get(key));
+					}									
+				}
+			}
+			
+			
+			
+		} catch (IOException e){
+			//Do nothing
+		} finally {
+			try{
+				if(br != null){
+					br.close();
+				}
+				if(fr != null){
+					fr.close();
+				}
+			} catch(IOException e){
+				//Do nothing
+			}
+		}
+	}
+
+	public static List<String> getPosibleStrings(char[][] matrix){
+		List<String> stringList = new ArrayList<String>();
+		int lines = matrix.length;
+		int columns = matrix[0].length;
+		
+		//horizontal
+		for(char[] line : matrix){
+			String aux = String.copyValueOf(line);
+			stringList.add(aux);
+			//if(aux.length() > 1)					
+			stringList.add(new StringBuffer(aux).reverse().toString());
+		}
+		//vertical		
+		for(int i=0 ; i<columns; i++){
+			StringBuffer bfr = new StringBuffer();
+			for(int j=0; j<lines; j++){				
+				bfr.append(matrix[j][i]);
+			}
+			stringList.add(bfr.toString());
+			stringList.add(bfr.reverse().toString());
+		}
+		//diagonal 
+		for(int i=0 ; i<columns; i++){
+			StringBuffer bfr = new StringBuffer();
+			for(int j=0; j<lines; j++){				
+				bfr.append(matrix[j][i]);
+			}
+			stringList.add(bfr.toString());
+			stringList.add(bfr.reverse().toString());
+		}
+		//diagonal inv
+		
+		for(String word : stringList){
+			System.out.println(word);
+		}
+		return stringList;
+	}
+	
+}
